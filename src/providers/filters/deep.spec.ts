@@ -17,6 +17,8 @@ const DIRECTORY_ENTRY_LEVEL_2 = tests.entry.builder().path('root/directory').dir
 const DIRECTORY_ENTRY_LEVEL_3 = tests.entry.builder().path('root/nested/directory').directory().build();
 
 function getDeepFilterInstance(options?: Options): DeepFilter {
+	options = options ?? {};
+	options.followSymbolicLinksOnce = false;
 	const settings = new Settings(options);
 
 	return new DeepFilter(settings, {
@@ -99,7 +101,7 @@ describe('Providers → Filters → Deep', () => {
 
 				reject(entry, {
 					positive: ['**/*'],
-					options: { followSymbolicLinks: false }
+					options: { followSymbolicLinks: false, followSymbolicLinksOnce: false }
 				});
 			});
 
@@ -108,7 +110,7 @@ describe('Providers → Filters → Deep', () => {
 
 				accept(entry, {
 					positive: ['**/*'],
-					options: { followSymbolicLinks: true }
+					options: { followSymbolicLinks: true, followSymbolicLinksOnce: false }
 				});
 			});
 		});

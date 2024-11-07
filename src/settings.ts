@@ -83,6 +83,12 @@ export type Options = {
 	 */
 	followSymbolicLinks?: boolean;
 	/**
+	 * Indicates whether to traverse descendants of symbolic link directories only once.
+	 *
+	 * @default true
+	 */
+	followSymbolicLinksOnce?: boolean;
+	/**
 	 * Custom implementation of methods for working with the file system.
 	 *
 	 * @default fs.*
@@ -165,6 +171,7 @@ export default class Settings {
 	public readonly dot: boolean = this._getValue(this._options.dot, false);
 	public readonly extglob: boolean = this._getValue(this._options.extglob, true);
 	public readonly followSymbolicLinks: boolean = this._getValue(this._options.followSymbolicLinks, true);
+	public readonly followSymbolicLinksOnce: boolean = this._getValue(this._options.followSymbolicLinksOnce, true);
 	public readonly fs: FileSystemAdapter = this._getFileSystemMethods(this._options.fs);
 	public readonly globstar: boolean = this._getValue(this._options.globstar, true);
 	public readonly ignore: Pattern[] = this._getValue(this._options.ignore, [] as Pattern[]);

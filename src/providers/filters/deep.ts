@@ -1,9 +1,13 @@
+import { lstatSync, realpathSync } from 'fs';
+import { join } from 'path';
 import { Entry, MicromatchOptions, EntryFilterFunction, Pattern, PatternRe } from '../../types';
 import Settings from '../../settings';
 import * as utils from '../../utils';
 import PartialMatcher from '../matchers/partial';
 
 export default class DeepFilter {
+	private readonly _visitedSymbolicLinks: Set<string> = new Set();
+
 	constructor(private readonly _settings: Settings, private readonly _micromatchOptions: MicromatchOptions) { }
 
 	public getFilter(basePath: string, positive: Pattern[], negative: Pattern[]): EntryFilterFunction {
@@ -29,6 +33,10 @@ export default class DeepFilter {
 		}
 
 		if (this._isSkippedSymbolicLink(entry)) {
+			return false;
+		}
+
+		if (this._alreadyVisitedSymbolicLinkRealPath(entry)) {
 			return false;
 		}
 
@@ -74,5 +82,24 @@ export default class DeepFilter {
 
 	private _isSkippedByNegativePatterns(entryPath: string, patternsRe: PatternRe[]): boolean {
 		return !utils.pattern.matchAny(entryPath, patternsRe);
+	}
+
+	private _alreadyVisitedSymbolicLinkRealPath(entry: Entry): boolean {
+		if (!this._settings.followSymbolicLinksOnce) {
+			return false;
+		}
+
+		const fullPath = join(this._settings.cwd, entry.path);
+		if (!lstatSync(fullPath).isSymbolicLink()) {
+			return this._visitedSymbolicLinks.has(fullPath);
+		}
+
+		const realPath = realpathSync(fullPath);
+		if (this._visitedSymbolicLinks.has(realPath)) {
+			return true;
+		}
+
+		this._visitedSymbolicLinks.add(realPath);
+		return false;
 	}
 }
