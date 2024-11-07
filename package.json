@@ -1,9 +1,12 @@
 {
-  "name": "fast-glob",
-  "version": "3.3.2",
+  "name": "fast-glob-wallaby",
+  "version": "3.3.3",
   "description": "It's a very fast and efficient glob library for Node.js",
   "license": "MIT",
-  "repository": "mrmlnc/fast-glob",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/wallabyjs/fast-glob.git"
+  },
   "author": {
     "name": "Denis Malinochkin",
     "url": "https://mrmlnc.com"
